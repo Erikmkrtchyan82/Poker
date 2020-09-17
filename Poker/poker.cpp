@@ -13,7 +13,7 @@ using namespace std::string_literals;
 
 namespace poker {
 
-player::player( cards_type&& cards ) :cards_( std::move( cards ) ) {
+player::player( cards_type cards ) :cards_( cards ) {
 	check_duplicates_();
 };
 
@@ -23,8 +23,10 @@ const category_type& player::get_category() const noexcept {
 
 void player::find_category() {
 
+	// At first sorting hand by ranks.
 	ranking_categories::sort_by_ranks( cards_.begin(), cards_.end() );
 
+	// Finding the category of the hand.
 	category_ = ranking_categories::catergory( cards_ );
 }
 
@@ -88,10 +90,13 @@ cards_type make_cards( const std::string& card_string ) {
 		if ( ss >> character )
 			rank += character;
 
+		// If `character` was digit...
 		if ( std::isdigit( character ) ) {
+			// continue reading all digits.
 			while ( ss >> character && std::isdigit( character ) ) {
 				rank += character;
 			}
+			// If `character` was not digit, puting back in stream.
 			ss.putback( character );
 		}
 

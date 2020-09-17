@@ -39,10 +39,7 @@ category_type high_card( cards_type& ) {
 }
 
 category_type pair( cards_type& cards ) {
-	// 'A' A  K  Q  J
-	//  A 'K' K  Q  J
-	//  A  K 'Q' Q  J
-	//  A  K  Q 'J' J
+
 	auto find_pair = []( auto begin, auto end ) {
 		return std::adjacent_find( begin, end, []( auto& a, auto& b ) {
 			return a.second == b.second;
@@ -59,46 +56,33 @@ category_type pair( cards_type& cards ) {
 		sort_by_ranks( cards.begin() + 2, cards.end() );
 	}
 
-	/*
-	if ( first != cards.begin() ) {
-		size_t distance = 0;
-		if ( first != cards.end() - 2 )
-			distance = std::distance( cards.begin(), first );
-
-		move_to_end( cards, cards.begin(), first );
-
-		if ( distance )
-			move_to_end( cards, cards.begin() + 2, cards.end() - distance );
-
-		sort_by_suits( cards.begin(), cards.begin() + 2 );
-	}
-	*/
-
 	return { "Pair",Category::One_pair };
 }
 
 category_type flush( cards_type& cards ) {
 
-	auto all_suits_are_same = [&] {return std::adjacent_find( cards.begin(), cards.end(), []( auto& a, auto& b ) {
-		return a.first != b.first; } ) == cards.end();
+	auto all_suits_are_same = [&] {
+		return std::adjacent_find( cards.begin(), cards.end(), []( auto& a, auto& b ) {
+			return a.first != b.first; } ) == cards.end();
 	};
 
-	//	if all suits aren't same
 	if ( !all_suits_are_same() )
 		return { {},Category::No_category };
 
-	// if `A` is the low rank, e.g. ( A 5 4 3 2 )
+	// If `A` will be lowest rank for flush, e.g. ( A 5 4 3 2 ).
+	// It's the only possible example for this, because all suits were same, all cards were sorted
+	//	and there was no duplicates in hand.
 	if ( cards.begin()->second == "A" && ( cards.begin() + 1 )->second == "5" ) {
 
 		std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
 		return { "Straight flush: Steel wheel",Category::Steel_wheel_straight_flush };
 	}
 
-	//	if ranks aren't sequential
 	if ( !is_sequential( cards.begin(), cards.end() ) )
 		return { "Flush",Category::Flush };
 
-	// if `A` is the high rank
+	// After all checks - hand is sequential and all suits are same,
+	// checking if the highest rank in the hand is `A`.
 	if ( cards.front().second == "A" )
 		return { "Straight flush: Royal",Category::Royal_straight_flush };
 
@@ -117,15 +101,13 @@ category_type straight( cards_type& cards ) {
 		return { "Straight",Category::Straight };
 	}
 
-	// e.g. ( A 5 4 3 2 ) or ( A 5 5 3 2 )
-	if ( cards.begin()->second == "A" && ( cards.begin() + 1 )->second == "5" ) {
 
-		// and ( _ x x x x ) is sequential
-		if ( is_sequential( cards.begin() + 1, cards.end() ) ) {
+	// Checks if 2 highest ranks in hand are `A` and `5`, and if 2nd, 3rd, 4th and 5th cards ranks are sequential.
+	if ( cards.begin()->second == "A" && ( cards.begin() + 1 )->second == "5" &&
+		 is_sequential( cards.begin() + 1, cards.end() ) ) {
 
-			std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
-			return { "Straight: Baby",Category::Baby_straight };
-		}
+		std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
+		return { "Straight: Baby",Category::Baby_straight };
 	}
 
 	return { {},Category::No_category };
@@ -133,6 +115,7 @@ category_type straight( cards_type& cards ) {
 
 category_type two_pair( cards_type& cards ) {
 
+	// Finding pair with card's ranks.
 	auto find_pair = []( auto begin, auto end ) {
 		return std::adjacent_find( begin, end, []( auto& a, auto& b ) {
 			return a.second == b.second;
@@ -141,32 +124,23 @@ category_type two_pair( cards_type& cards ) {
 
 	auto first = find_pair( cards.begin(), cards.end() );
 
-	decltype( first ) second;
+	auto second = cards.end();
 
+	// Checks if pair exists, and if so searching second pair after first one.
 	if ( first != cards.end() )
 		second = find_pair( first + 1, cards.end() );
 
-	if ( first == cards.end() || second == cards.end() /*|| first == second*/ )
+	if ( second == cards.end() )
 		return { {},Category::No_category };
 
-	/*
-	// if distance from `first + 1` and `second` is 1,
-	// e.g. ( A A K K Q ) or ( A K K Q Q )
-	if ( std::distance( first + 1, second ) == 1 && first != cards.begin() ) {
-
-		if ( first != cards.begin() )
-			move_to_end( cards, cards.begin(), cards.begin() + 1 );
-
-	}
-	else if ( std::distance( first + 1, second ) == 2 )
-		move_to_end( cards, cards.begin() + 2, cards.begin() + 3 );
-	*/
-
+	// Checks if the distance between pairs is 2.
 	// e.g. ( A A K Q Q )
 	if ( std::distance( first + 1, second ) == 2 )
-		std::rotate( cards.begin() + 2, cards.begin() + 3, cards.end() );
-	// e.g. ( A K K Q Q )
-	else if ( first != cards.begin() )
+		std::rotate( cards.begin() + 2, cards.begin() + 3, cards.end() ); // Moving 3rd card to the end.
+	// Else the distance is 1.
+	// If the first pair is in the begining of hand, then the hand is ordered.
+
+	else if ( first != cards.begin() )	// e.g. ( A K K Q Q )
 		std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
 
 	sort_by_suits( cards.begin(), cards.begin() + 2 );
@@ -179,6 +153,7 @@ category_type full_house( cards_type& cards ) {
 
 	bool found = false;
 
+	// Checks if hand is already ordered for "full house" category.
 	// e.g. ( A A A K K )
 	if ( cards[ 0 ].second == cards[ 1 ].second &&
 		 cards[ 0 ].second == cards[ 2 ].second &&
@@ -208,6 +183,7 @@ category_type four_of_a_kind( cards_type& cards ) {
 
 	bool found = false;
 
+	// Checks if hand is already ordered for "four of a kind" category.
 	// e.g. ( A A A A K )
 	if ( cards[ 0 ].second == cards[ 1 ].second &&
 		 cards[ 0 ].second == cards[ 2 ].second &&
@@ -236,6 +212,7 @@ category_type three_of_a_kind( cards_type& cards ) {
 
 	bool found = false;
 
+	// Checks if hand is already ordered for "three of a kind" category.
 	// e.g. ( A A A K Q )
 	if ( cards[ 0 ].second == cards[ 1 ].second &&
 		 cards[ 0 ].second == cards[ 2 ].second ) {
@@ -247,8 +224,7 @@ category_type three_of_a_kind( cards_type& cards ) {
 			  cards[ 1 ].second == cards[ 3 ].second ) {
 
 		found = true;
-		std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
-		sort_by_ranks( cards.end() - 2, cards.end() );
+		std::rotate( cards.begin(), cards.begin() + 1, cards.end()-1 );
 	}
 	// e.g. ( A K Q Q Q )
 	else if ( cards[ 2 ].second == cards[ 3 ].second &&
@@ -274,6 +250,7 @@ category_type search( cards_type& cards, Funcs... func ) {
 	static_assert( std::is_same_v<std::common_type<Funcs...>::type, common_func_type> );
 
 	category_type category;
+	//	Using short-circuit evaluation
 	( ( category = func( cards ), category.second != Category::No_category ? true : false ) || ... );
 
 	return category;
@@ -281,6 +258,7 @@ category_type search( cards_type& cards, Funcs... func ) {
 
 category_type catergory( cards_type& cards ) {
 
+	// Calls `search` function with poker hand's category functions from high rank to low.
 	return search( cards,
 				   flush,
 				   four_of_a_kind,

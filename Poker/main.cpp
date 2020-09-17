@@ -1,9 +1,10 @@
-﻿#include <iostream>
-#include <sstream>
+﻿#include <string>
+#include <iostream>
+#include <stdexcept>
 
 #include "poker.hpp"
-#include "ranking_categories.hpp"
 #include "exceptions.hpp"
+#include "ranking_categories.hpp"
 
 void test() {
 
@@ -89,8 +90,8 @@ int main( int argc, char*argv[] ) {
 		std::string first = argv[ 1 ];
 		std::string second = argv[ 2 ];
 
-		poker::player player1 = poker::make_cards( first );
-		poker::player player2 = poker::make_cards( second );
+		poker::player player1 ( poker::make_cards( first ));
+		poker::player player2 ( poker::make_cards( second ));
 
 		player1.find_category();
 		player2.find_category();
