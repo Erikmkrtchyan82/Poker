@@ -24,14 +24,14 @@ void sort_by_suits( cards_type::iterator begin, cards_type::iterator end ) noexc
 // Checks if cards from `begin` to `end` is sequential by ranks's rank.
 bool is_sequential( cards_type::iterator begin, cards_type::iterator end );
 
-category_type high_card( cards_type& );
-category_type pair( cards_type& cards );
-category_type flush( cards_type& cards );
-category_type straight( cards_type& cards );
-category_type two_pair( cards_type& cards );
-category_type full_house( cards_type& cards );
+category_type flushes( cards_type& cards );
 category_type four_of_a_kind( cards_type& cards );
+category_type full_house( cards_type& cards );
+category_type straight( cards_type& cards );
 category_type three_of_a_kind( cards_type& cards );
+category_type two_pair( cards_type& cards );
+category_type pair( cards_type& cards );
+category_type high_card( cards_type& );
 
 // Checks every possible category for a hand from highest to lowest.
 template< typename... Funcs>
