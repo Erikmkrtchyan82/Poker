@@ -207,7 +207,7 @@ category_type two_pair( cards_type& cards ) {
 	if ( std::distance( first + 1, second ) == 2 )
 		std::rotate( cards.begin() + 2, cards.begin() + 3, cards.end() ); // Moving 3rd card to the end.
 	// Else the distance is 1.
-	// If the first pair is in the begining of hand, then the hand is ordered.
+	// If the first pair is in the beginning of hand, then the hand is ordered.
 
 	else if ( first != cards.begin() )	// e.g. ( A K K Q Q )
 		std::rotate( cards.begin(), cards.begin() + 1, cards.end() );
@@ -257,7 +257,7 @@ category_type search( cards_type& cards, Funcs... func ) {
 	return category;
 }
 
-category_type catergory( cards_type& cards ) {
+category_type category( cards_type& cards ) {
 
 	// Calls `search` function with poker hand's category functions from high rank to low.
 	return search( cards,

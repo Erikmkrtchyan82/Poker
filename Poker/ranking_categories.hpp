@@ -38,7 +38,7 @@ template< typename... Funcs>
 category_type search( cards_type& cards, Funcs... func );
 
 // Returns `search` s return value.
-category_type catergory( cards_type& cards );
+category_type category( cards_type& cards );
 
 } // namespace ranking_categories
 

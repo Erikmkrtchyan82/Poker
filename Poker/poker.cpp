@@ -28,7 +28,7 @@ void player::find_category() {
 	ranking_categories::sort_by_ranks( cards_.begin(), cards_.end() );
 
 	// Finding the category of the hand.
-	category_ = ranking_categories::catergory( cards_ );
+	category_ = ranking_categories::category( cards_ );
 }
 
 std::ostream& operator<<( std::ostream& os, player& p1 ) {
