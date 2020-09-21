@@ -146,6 +146,7 @@
     <ClCompile Include="ranking_categories.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ascii_character.hpp" />
     <ClInclude Include="exceptions.hpp" />
     <ClInclude Include="poker.hpp" />
     <ClInclude Include="ranking_categories.hpp" />

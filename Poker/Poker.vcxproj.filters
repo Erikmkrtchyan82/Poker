@@ -35,5 +35,8 @@
     <ClInclude Include="ranking_categories.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ascii_character.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

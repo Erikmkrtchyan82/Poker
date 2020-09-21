@@ -4,9 +4,15 @@
 
 #include "poker.hpp"
 #include "exceptions.hpp"
+#include "ascii_character.hpp"
 #include "ranking_categories.hpp"
 
 int main( int argc, char*argv[] ) {
+
+#if USING_ASCII_CHARACTERS
+	system("chcp 65001");
+	system("CLS");
+#endif
 
 	if ( argc != 3 ) {
 		std::cerr << "Usage: " << argv[ 0 ] << " <first-hand> <second-hand>\n";

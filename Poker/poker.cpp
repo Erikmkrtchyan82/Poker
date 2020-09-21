@@ -1,4 +1,4 @@
-#include <string>
+﻿#include <string>
 #include <cctype>
 #include <vector>
 #include <ostream>
@@ -7,6 +7,7 @@
 
 #include "poker.hpp"
 #include "exceptions.hpp"
+#include "ascii_character.hpp"
 #include "ranking_categories.hpp"
 
 using namespace std::string_literals;
@@ -31,8 +32,38 @@ void player::find_category() {
 }
 
 std::ostream& operator<<( std::ostream& os, player& p1 ) {
+
+#if USING_ASCII_CHARACTERS
+	auto S = "♠";
+	auto C = "♣";
+	auto H = "♥";
+	auto D = "♦";
+
+	for ( const auto& [suit, rank] : p1.cards_ ) {
+
+		switch ( suit ) {
+			case 'C':
+				os << C; 
+				break;
+			case 'S':
+				os << S;
+				break;
+			case 'D':
+				os << D;
+				break;
+			case 'H':
+				os << H;
+				break;
+		}
+			
+		os << rank;
+	}
+#else
 	for ( const auto& [suit, rank] : p1.cards_ )
 		os << suit << rank;
+
+#endif
+
 	return os;
 }
 
