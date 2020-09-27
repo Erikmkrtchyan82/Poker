@@ -10,8 +10,8 @@
 int main( int argc, char*argv[] ) {
 
 #if USING_ASCII_CHARACTERS
-	system("chcp 65001");
-	system("CLS");
+	system( "chcp 65001" );
+	system( "CLS" );
 #endif
 
 	if ( argc != 3 ) {
@@ -20,8 +20,8 @@ int main( int argc, char*argv[] ) {
 	}
 	try {
 
-		poker::player player1 ( poker::make_cards( argv[ 1 ] ));
-		poker::player player2 ( poker::make_cards( argv[ 2 ] ));
+		poker::player player1( poker::make_cards( argv[ 1 ] ) );
+		poker::player player2( poker::make_cards( argv[ 2 ] ) );
 
 		player1.find_category();
 		player2.find_category();
@@ -35,6 +35,7 @@ int main( int argc, char*argv[] ) {
 	}
 	catch ( std::exception& e ) {
 		std::cout << e.what() << std::endl << std::endl;
+		return 2;
 	}
 	catch ( ... ) {
 		std::cerr << "UNEXPECTED EXCEPTION" << std::endl;

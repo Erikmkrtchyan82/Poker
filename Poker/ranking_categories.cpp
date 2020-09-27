@@ -34,7 +34,6 @@ bool is_sequential( cards_type::iterator begin, cards_type::iterator end ) {
 	} ) == end;
 }
 
-
 category_type flushes( cards_type& cards ) {
 
 	auto all_suits_are_same = [&] {
@@ -136,7 +135,6 @@ category_type straight( cards_type& cards ) {
 		return { "Straight",Category::Straight };
 	}
 
-
 	// Checks if 2 highest ranks in hand are `A` and `5`, and if 2nd, 3rd, 4th and 5th cards ranks are sequential.
 	if ( cards.begin()->second == "A" && ( cards.begin() + 1 )->second == "5" &&
 		 is_sequential( cards.begin() + 1, cards.end() ) ) {
@@ -164,7 +162,7 @@ category_type three_of_a_kind( cards_type& cards ) {
 			  cards[ 1 ].second == cards[ 3 ].second ) {
 
 		found = true;
-		std::rotate( cards.begin(), cards.begin() + 1, cards.end()-1 );
+		std::rotate( cards.begin(), cards.begin() + 1, cards.end() - 1 );
 	}
 	// e.g. ( A K Q Q Q )
 	else if ( cards[ 2 ].second == cards[ 3 ].second &&
@@ -231,10 +229,8 @@ category_type pair( cards_type& cards ) {
 	if ( first == cards.end() )
 		return { {},Category::No_category };
 
-	if ( first != cards.begin() ) {
-		std::rotate( cards.begin(), first, cards.end() );
-		sort_by_ranks( cards.begin() + 2, cards.end() );
-	}
+	if ( first != cards.begin() )
+		std::rotate( cards.begin(), first, first + 2 );
 
 	return { "Pair",Category::One_pair };
 }
@@ -242,7 +238,6 @@ category_type pair( cards_type& cards ) {
 category_type high_card( cards_type& ) {
 	return { "High card",Category::High_card };
 }
-
 
 template<typename... Funcs>
 category_type search( cards_type& cards, Funcs... func ) {
